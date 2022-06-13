@@ -15,6 +15,7 @@
 #include "LPC17xx.h"
 #include "digital.h"
 #include <stdint.h>
+#include <stdio.h>
 #include "periodica.h"
 #include "delay.h"
 #include "uart.h"
@@ -27,17 +28,7 @@ int main() {
   UART0_Init(9600);
   periodica_init();
   delay_init();
-  seg_init( );
-   
-  uint16_t x;
-  delay_ms(1000);
-  for (uint16_t v=0;v<9999;v++)
-  {
-  	printf("Entre com o numero \n");
-  	scanf("%d",&x);
-  	seg_apresenta(x);
-  	
-  }
+  
   while(1){}
  
  
