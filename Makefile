@@ -1,6 +1,6 @@
-GCC_BIN =  
+GCC_BIN =  /usr/bin/X11/
 PROJECT = main
-OBJECTS = system_LPC17xx.o startup_LPC17xx.o testa_serial.o delay.o digital.o uart.o
+OBJECTS = system_LPC17xx.o startup_LPC17xx.o main.o digital.o periodica.o timer.o delay.o seg.o uart.o
 SYS_OBJECTS = 
 INCLUDE_PATHS = -I. -I./LPC1768 
 LIBRARY_PATHS = 
@@ -25,10 +25,6 @@ LD_FLAGS = -mcpu=cortex-m3 -mthumb -Wl,--gc-sections,-Map=$(PROJECT).map,--cref
 LD_SYS_LIBS = -lc -lgcc -lnosys
 
 all: $(PROJECT).bin
-
-flash:
-	 lpc21isp -control -bin main.bin /dev/ttyUSB0 115200 12000
-
 
 clean:
 	rm -f *~ $(PROJECT).bin $(PROJECT).elf $(addprefix $(BUILD_DIR), $(OBJECTS)) $(PROJECT).map
@@ -57,3 +53,7 @@ $(PROJECT).bin: $(PROJECT).elf nxpsum
 	$(OBJCOPY) -O binary $< $@
 	# Compute nxp checksum on .bin file here
 	./nxpsum $@
+
+
+install: 
+	 lpc21isp -control -bin main.bin /dev/ttyUSB0 115200 12000

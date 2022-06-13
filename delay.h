@@ -1,12 +1,10 @@
-#ifndef _DELAY_
-#define _DELAY_
-
+#ifndef __DELAY__
+#define __DELAY__
 #include <stdint.h>
 
-#define ST_CTRL     (*((volatile unsigned long*)0xE000E010)) //page 783
-
-void delay_ms(uint32_t n);
+void delay_init(void);
 void delay_us(uint32_t n);
+void delay_ms(uint32_t n);
 
 
 #endif

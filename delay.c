@@ -1,44 +1,44 @@
 #include "LPC17xx.h"
 #include "delay.h"
 
+
+
+#define ST_CTRL     (*((volatile unsigned long*)0xE000E010)) //page 783
 volatile unsigned long sysTickCounter;
 
-void SysTick_Handler (void);
-
-
 //tratador de interrupcao
-void SysTick_Handler(void) {
+void SysTick_Handler(void)
+{
 	if (sysTickCounter != 0x00) sysTickCounter--;
 }
 
-
-void habilita_timer()
+void yes_timer()
 {
 	ST_CTRL |= 1<<1; // enable IRQ interrupt
-    ST_CTRL |= 1; // enable systick	
+	ST_CTRL |= 1;   // enable systick	
 }
-void desabilita_timer()
+void no_timer()
 {
 	ST_CTRL &= 0xFFFFFFFC; // enable IRQ interrupt
 }
- 
-void delay_us(uint32_t n) {
-
-	desabilita_timer();
-
+void delay_init(void)
+{
+} 
+void delay_us(uint32_t n)
+{
+	no_timer();
 	SysTick_Config(SystemCoreClock / 1000000);
 	sysTickCounter = n;
-	habilita_timer();
+	yes_timer();
 	while (sysTickCounter != 0);
 }
  
-
- 
-void delay_ms(uint32_t n) {
-	desabilita_timer();
+void delay_ms(uint32_t n)
+{
+	no_timer();
 	SysTick_Config(SystemCoreClock / 1000);
 	sysTickCounter = n;
-	habilita_timer(); 
+	yes_timer(); 
 	while (sysTickCounter != 0);
 }
 

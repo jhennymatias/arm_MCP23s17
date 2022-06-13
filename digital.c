@@ -1,33 +1,37 @@
-#include "LPC17xx.h"
+
 #include "digital.h"
+#include "LPC17xx.h"
 
 
+LPC_GPIO_TypeDef      * vet[5]={LPC_GPIO0,LPC_GPIO1,LPC_GPIO2,LPC_GPIO3,LPC_GPIO4};
 
-static LPC_GPIO_TypeDef (* const LPC_GPIO[5]) = { LPC_GPIO0, LPC_GPIO1, LPC_GPIO2, LPC_GPIO3, LPC_GPIO4  };
 
-
-void pinMode( uint16_t portbit, uint8_t bitVal )
-{   
-  if (bitVal == OUTPUT)  LPC_GPIO[(uint8_t)(portbit>>5)]->FIODIR |= (1<<(31&portbit));
-  else  LPC_GPIO[portbit>>5]->FIODIR &= ~(1<<(31&portbit));
-}
-
-void digitalWrite( uint16_t portbit, uint8_t valor )
+void pinMode (uint8_t pb, uint8_t tipo)
 {
-    LPC_GPIO[portbit>>5]->FIOMASK = ~(1<<(31&portbit));
-	if (valor == LOW)  LPC_GPIO[(uint8_t)(portbit>>5)]->FIOCLR = (1<<(31&portbit));
-    else LPC_GPIO[(uint8_t)(portbit>>5)]->FIOSET = (1<<(31&portbit));
+	uint8_t porta = pb >> 5;
+	uint8_t bit = pb & 31;
+	if (tipo == OUTPUT) vet[porta]->FIODIR |= (1 << bit);
+	else vet[porta]->FIODIR &= (~(1 << bit));
+	
 }
-
-
-uint8_t digitalRead (uint16_t portbit)
+void digitalWrite( uint8_t pb, uint8_t valor)
 {
-    uint32_t val;
-
-    LPC_GPIO[portbit>>5]->FIOMASK = ~(1<<(31&portbit));
-    val = LPC_GPIO[portbit>>5]->FIOPIN;
-    val = val >> (31&portbit);
-    LPC_GPIO[portbit>>5]->FIOMASK = 0x00000000;
-    return (uint8_t)(val& 1);
+	uint8_t porta = pb >> 5;
+	uint8_t bit = pb & 31;
+	
+	if (valor==HIGH)
+		    vet[porta]->FIOSET = (1 << bit);
+	else 
+		    vet[porta]->FIOCLR = (1 << bit);
 }
+
+
+uint8_t digitalRead (uint8_t pb)
+{
+	uint8_t porta = pb >> 5;
+	uint8_t bit = pb & 31;
+	 return ( (   ((vet[porta]->FIOPIN) >>  bit)  & 1)) ;
+	
+}
+
 
