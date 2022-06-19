@@ -1,17 +1,3 @@
-// EXEMPLO DE UM Pisca Pisca que usa a Lampada do kit
-// para compilar:  
-//                    make
-// para gravar na placa (usando o bootloader): 
-//                   lpc21isp -control -bin main.bin /dev/ttyUSB0 115200 12000
-//
-// para gravar na placa (usando o JTAG)
-//                   openocd -f lpc1768.cfg
-// abrir outro shell
-// telnet localhost 4444
-// > reset halt
-// > flash write_image erase main.bin 0x0 bin
-
-
 #include "LPC17xx.h"
 #include "digital.h"
 #include <stdint.h>
@@ -19,21 +5,28 @@
 #include "periodica.h"
 #include "delay.h"
 #include "uart.h"
+#include "MCP.h"
 
+int main()
+{
+  const int bus = 0;
+  const int chip_select = 0;
+  const int hw_addr = 0;
 
+  // conecta com o SPI e inicializa
+  int mcp23s17_fd = mcp23s17_init(bus, chip_select);
+  const uint8_t ioconfig = BANK_OFF |
+                          INT_MIRROR_OFF |
+                          SEQOP_OFF |
+                          DISSLW_OFF |
+                          HAEN_ON |
+                          ODR_OFF |
+                          INTPOL_LOW;
 
-int main() {
-
-  SystemInit();
-  UART0_Init(9600);
-  periodica_init();
-  delay_init();
+  while (1){
+    mcp23s17_write_bit(ioconfig, 0, IOCON, hw_addr, mcp23s17_fd);
+    delay_ms(1000);
+    mcp23s17_write_bit(ioconfig, 1, IOCON, hw_addr, mcp23s17_fd);
   
-  while(1){}
- 
- 
- 
- 
- 
- 
+  }
 }

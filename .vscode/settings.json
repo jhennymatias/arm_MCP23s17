@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "SPI.C": "cpp"
+        "SPI.C": "cpp",
+        "uart.h": "c"
     }
 }

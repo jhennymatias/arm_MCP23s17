@@ -33,7 +33,7 @@ static uint8_t get_spi_control_byte(uint8_t rw_cmd, uint8_t hw_addr);
 static int init_epoll(void);
 
 
-int mcp23s17_open(int bus, int chip_select)
+int mcp23s17_init(int bus, int chip_select)
 {
     int fd;
     // open
@@ -65,56 +65,6 @@ int mcp23s17_open(int bus, int chip_select)
     return fd;
 }
 
-uint8_t mcp23s17_read_reg(uint8_t reg, uint8_t hw_addr, int fd)
-{
-    uint8_t control_byte = get_spi_control_byte(READ_CMD, hw_addr);
-    uint8_t tx_buf[3] = {control_byte, reg, 0};
-    uint8_t rx_buf[sizeof tx_buf];
-
-    struct spi_ioc_transfer spi;
-    memset (&spi, 0, sizeof(spi));
-    spi.tx_buf = (unsigned long) tx_buf;
-    spi.rx_buf = (unsigned long) rx_buf;
-    spi.len = sizeof tx_buf;
-    spi.delay_usecs = spi_delay;
-    spi.speed_hz = spi_speed;
-    spi.bits_per_word = spi_bpw;
-
-    // do the SPI transaction
-    if ((ioctl(fd, SPI_IOC_MESSAGE(1), &spi) < 0)) {
-        fprintf(stderr,
-                "mcp23s17_read_reg: There was a error during the SPI "
-                "transaction.\n");
-        return -1;
-    }
-
-    // return the data
-    return rx_buf[2];
-}
-
-void mcp23s17_write_reg(uint8_t data, uint8_t reg, uint8_t hw_addr, int fd)
-{
-    uint8_t control_byte = get_spi_control_byte(WRITE_CMD, hw_addr);
-    uint8_t tx_buf[3] = {control_byte, reg, data};
-    uint8_t rx_buf[sizeof tx_buf];
-
-    struct spi_ioc_transfer spi;
-    memset (&spi, 0, sizeof(spi));
-    spi.tx_buf = (unsigned long) tx_buf;
-    spi.rx_buf = (unsigned long) rx_buf;
-    spi.len = sizeof tx_buf;
-    spi.delay_usecs = spi_delay;
-    spi.speed_hz = spi_speed;
-    spi.bits_per_word = spi_bpw;
-
-    // do the SPI transaction
-    if ((ioctl(fd, SPI_IOC_MESSAGE(1), &spi) < 0)) {
-        fprintf(stderr,
-                "mcp23s17_write_reg: There was a error during the SPI "
-                "transaction.\n");
-    }
-}
-
 uint8_t mcp23s17_read_bit(uint8_t bit_num,
                           uint8_t reg,
                           uint8_t hw_addr,
@@ -140,67 +90,6 @@ void mcp23s17_write_bit(uint8_t data,
 
 
 
-
-int mcp23s17_enable_interrupts()
-{
-    int fd, len;
-    char str_gpio[3];
-    char str_filenm[33];
-
-    if ((fd = open("/sys/class/gpio/export", O_WRONLY)) < 0)
-        return -1;
-
-    len = snprintf(str_gpio, sizeof(str_gpio), "%d", GPIO_INTERRUPT_PIN);
-    write(fd, str_gpio, len);
-    close(fd);
-
-    snprintf(str_filenm, sizeof(str_filenm), "/sys/class/gpio/gpio%d/direction", GPIO_INTERRUPT_PIN);
-    if ((fd = open(str_filenm, O_WRONLY)) < 0)
-        return -1;
-
-    write(fd, "in", 3);
-    close(fd);
-
-    snprintf(str_filenm, sizeof(str_filenm), "/sys/class/gpio/gpio%d/edge", GPIO_INTERRUPT_PIN);
-    if ((fd = open(str_filenm, O_WRONLY)) < 0)
-        return -1;
-
-    write(fd, "falling", 8);
-    close(fd);
-
-    return 0;
-}
-
-int mcp23s17_disable_interrupts()
-{
-    int fd, len;
-    char str_gpio[3];
-
-    if ((fd = open("/sys/class/gpio/unexport", O_WRONLY)) < 0)
-        return -1;
-
-    len = snprintf(str_gpio, sizeof(str_gpio), "%d", GPIO_INTERRUPT_PIN);
-    write(fd, str_gpio, len);
-    close(fd);
-
-    return 0;
-}
-
-int mcp23s17_wait_for_interrupt(int timeout)
-{
-    int num_fds = -1;
-
-    if (epoll_fd <= 0) {
-        if (init_epoll() != 0) {
-            return -1;
-        }
-    }
-
-    // Wait for user event
-    num_fds = epoll_wait(epoll_fd, &mcp23s17_epoll_events, 1, timeout);
-
-    return num_fds;
-}
 
 static int init_epoll(void)
 {
