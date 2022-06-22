@@ -17,11 +17,11 @@ void mcp_init (void){
 
 void reset (void){
 	digitalWrite(pino_CE, LOW);
-	MEU_delay();
+	MEU_delay_us(1);
 	spi_habilita();
-	MEU_delay();
+	MEU_delay_us(1);
 	spi_write(0x70);
-	MEU_delay();
+	MEU_delay_us(1);
 	spi_desabilita();
 	digitalWrite(pino_CE, HIGH);
 }
@@ -47,11 +47,13 @@ void toggleBits(uint8_t addr, uint8_t bitmask){
   }
 }
 
-uint8_t readBits(uint8_t addr, uint8_t bitmask){
+uint8_t readBits(uint8_t addr, uint8_t bitmask)
+{
   if (addr <= 0x15){
     uint8_t cur_val = readPE(addr) & bitmask ;
     return cur_val ;
   }
+  return 0;
 }
 
 void mPortYSetPinsOut(uint8_t bitmask){

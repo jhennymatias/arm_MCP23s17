@@ -77,4 +77,8 @@ void mPortYDisablePullUp(uint8_t );
 
 void mPortZDisablePullUp(uint8_t );
 
+void writePE (uint8_t reg, uint8_t data);
+
+uint8_t readPE (uint8_t reg);
+
 #endif
