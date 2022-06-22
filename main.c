@@ -6,27 +6,37 @@
 #include "delay.h"
 #include "uart.h"
 #include "MCP.h"
+#include "spi.h"
 
-int main()
+void configura_chaves(void)
 {
-  const int bus = 0;
-  const int chip_select = 0;
-  const int hw_addr = 0;
+	pinMode(PIN_1_08, INPUT);
+	pinMode(PIN_1_04, INPUT);
+	pinMode(PIN_1_01, INPUT);
+	pinMode(PIN_1_00, INPUT);
+	pinMode(PIN_2_10, INPUT);
+}
 
-  // conecta com o SPI e inicializa
-  int mcp23s17_fd = mcp23s17_init(bus, chip_select);
-  const uint8_t ioconfig = BANK_OFF |
-                          INT_MIRROR_OFF |
-                          SEQOP_OFF |
-                          DISSLW_OFF |
-                          HAEN_ON |
-                          ODR_OFF |
-                          INTPOL_LOW;
 
-  while (1){
-    mcp23s17_write_bit(ioconfig, 0, IOCON, hw_addr, mcp23s17_fd);
-    delay_ms(1000);
-    mcp23s17_write_bit(ioconfig, 1, IOCON, hw_addr, mcp23s17_fd);
-  
-  }
+void configura_pino_MCP(void){
+	
+}
+
+uint8_t le_configuracao_chaves(void)
+{
+	uint8_t v=0;
+
+	v = ((digitalRead(PIN_1_08) << 3) | 
+         (digitalRead(PIN_1_04) << 2) | 
+        (digitalRead(PIN_1_01) << 1) | 
+         (digitalRead(PIN_1_00) )) ;
+	return v;
+}
+
+int main(){
+  SystemInit();
+  UART0_Init(9600);
+	mcp_init();
+
+  return 0;
 }

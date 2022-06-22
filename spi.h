@@ -10,4 +10,3 @@ void    spi_configura (uint8_t pino_cs, uint8_t pino_miso, uint8_t pino_mosi, ui
 uint8_t spi_write (uint8_t dado);
 
 #endif
-

@@ -1,57 +1,80 @@
+#ifndef _NRF24_
+#define _NRF24_
+#include <inttypes.h>
+#include "spi.h"
 
-#ifndef __MCP__
-#define __MCP__
-#include <stdint.h>
-#include <stdio.h>
+#define PE_OPCODE_HEADER 0b01000000
+#define READ 0b00000001
+#define WRITE 0b00000000
 
-#define WRITE_CMD 0
-#define READ_CMD 1
+#define R_REGISTER 0x00
+#define W_REGISTER 0x20
 
-// Registradores do MCP
-#define IODIRA 0x00   // I/O direction A
-#define IODIRB 0x01   // I/O direction B
-#define IPOLA 0x02    // I/O polarity A
-#define IPOLB 0x03    // I/O polarity B
-#define GPINTENA 0x04 // interupt enable A
-#define GPINTENB 0x05 // interupt enable B
-#define DEFVALA 0x06  // register default value A (interupts)
-#define DEFVALB 0x07  // register default value B (interupts)
-#define INTCONA 0x08  // interupt control A
-#define INTCONB 0x09  // interupt control B
-#define IOCON 0x0A    // I/O config (also 0x0B)
-#define GPPUA 0x0C    // port A pullups
-#define GPPUB 0x0D    // port B pullups
-#define INTFA 0x0E    // interupt flag A (where the interupt came from)
-#define INTFB 0x0F    // interupt flag B
-#define INTCAPA 0x10  // interupt capture A (value at interupt is saved here)
-#define INTCAPB 0x11  // interupt capture B
-#define GPIOA 0x12    // port A
-#define GPIOB 0x13    // port B
-#define OLATA 0x14    // output latch A
-#define OLATB 0x15    // output latch B
+#define SET_BANK     0x80
+#define CLEAR_BANK   0x00
+#define SET_MIRROR   0x40
+#define CLEAR_MIRROR 0x00
+#define SET_SEQOP    0x20
+#define CLEAR_SEQOP  0x00
+#define SET_DISSLW   0x10
+#define CLEAR_DISSLW 0x00
+#define SET_HAEN     0x08
+#define CLEAR_HAEN   0x00
+#define SET_ODR      0x04
+#define CLEAR_ODR    0x00
+#define SET_INTPOL   0x02
+#define CLEAR_INTPOL 0x00
 
-// I/O config
-#define BANK_OFF 0x00 // addressing mode
-#define BANK_ON 0x80
-#define INT_MIRROR_ON 0x40 // interupt mirror (INTa|INTb)
-#define INT_MIRROR_OFF 0x00
-#define SEQOP_OFF 0x20 // incrementing address pointer
-#define SEQOP_ON 0x00
-#define DISSLW_ON 0x10 // slew rate
-#define DISSLW_OFF 0x00
-#define HAEN_ON 0x08 // hardware addressing
-#define HAEN_OFF 0x00
-#define ODR_ON 0x04 // open drain for interupts
-#define ODR_OFF 0x00
-#define INTPOL_HIGH 0x02 // interupt polarity
-#define INTPOL_LOW 0x00
 
-#define GPIO_INTERRUPT_PIN 25
+// **** Register Addresses (BANK=0) ****
+// Note: Rename all PortA to PortY, PortB to PortZ to avoid confusion with PIC
+#define IODIRA   0x00
+#define IODIRB   0x01
+#define IPOLY    0x02
+#define IPOLZ    0x03
+#define GPINTENA 0x04
+#define GPINTENB 0x05
+#define DEFVALA  0x06
+#define DEFVALB  0x07
+#define INTCONA  0x08
+#define INTCONB  0x09
+#define IOCON    0x0A
+//#define IOCON    0x0B
+#define GPPUA    0x0C
+#define GPPUB    0x0D
+#define INTFA    0x0E
+#define INTFB    0x0F
+#define INTCAPA  0x10
+#define INTCAPB  0x11
+#define GPIOA    0x12
+#define GPIOB    0x13
+#define OLATA    0x14
+#define OLATB    0x15
 
-int mcp23s17_init(int bus, int chip_select);
+void    mcp_init (void);
 
-uint8_t mcp23s17_read_bit(uint8_t bit_num, uint8_t reg, uint8_t hw_addr, int fd);
+void mPortYSetPinsOut(uint8_t );
 
-void mcp23s17_write_bit(uint8_t data, uint8_t bit_num, uint8_t reg, uint8_t hw_addr, int fd);
+void mPortZSetPinsOut(uint8_t );
+
+void mPortYSetPinsIn(uint8_t );
+
+void mPortZSetPinsIn(uint8_t );
+
+void mPortYIntEnable(uint8_t );
+
+void mPortYIntDisable(uint8_t );
+
+void mPortZIntEnable(uint8_t );
+
+void mPortZIntDisable(uint8_t );
+
+void mPortYEnablePullUp(uint8_t );
+
+void mPortZEnablePullUp(uint8_t );
+
+void mPortYDisablePullUp(uint8_t );
+
+void mPortZDisablePullUp(uint8_t );
 
 #endif
