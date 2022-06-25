@@ -1,121 +1,72 @@
 #include "digital.h"
 #include "MCP.h"
-#include "spi.h"
-#include "delay.h"
 
-void reset (void);
 
 uint8_t pino_CE;
+uint8_t current_IODIRA = 0xFF;
+uint8_t current_GPIOA = 0x00;
+
 
 void mcp_init (void){
-	// configura os pinos que serao usados para o CSN, MISO, MOSI, SCK
 	spi_configura (PIN_4_28, PIN_3_25, PIN_3_26, PIN_4_29);
-	pino_CE = PIN_4_30;
-  delay_ms(500);
-	reset();
+  spi_desabilita();
+  spi_write(OPCODE);
+  spi_write(IODIRA);
+  spi_write(current_IODIRA);
+  set_cs_high();
+  
+  spi_desabilita();
+  spi_write(OPCODE);
+  spi_write(IODIRA);
+  spi_write(current_GPIOA);
+  spi_habilita();
+
+   // set pull-up resistor for GPIOA - port 0-3
+    spi_desabilita();
+    spi_write(0x40);
+    spi_write(GPPUA);
+    spi_write(0x0F);
+    spi_habilita();
 }
 
-void reset (void){
-	digitalWrite(pino_CE, LOW);
-	MEU_delay_us(1);
-	spi_habilita();
-	MEU_delay_us(1);
-	spi_write(0x70);
-	MEU_delay_us(1);
-	spi_desabilita();
-	digitalWrite(pino_CE, HIGH);
-}
 
-void clearBits(uint8_t addr, uint8_t bitmask){
-  if (addr <= 0x15){
-    uint8_t cur_val = readPE(addr);
-    writePE(addr, cur_val & (~bitmask));
+void mcp_config(uint8_t pino, int operacao){
+  spi_desabilita();
+  spi_write(OPCODE);
+  spi_write(IODIRA);
+
+  if(operacao = INPUT){
+    current_IODIRA |= (1 << pino);
+  }else{
+    current_IODIRA &= ~(1 << pino);
   }
+
+  spi_write(current_IODIRA);
+  spi_habilita(); 
 }
 
-void setBits(uint8_t addr, uint8_t bitmask){
-  if (addr <= 0x15){
-    uint8_t cur_val = readPE(addr);
-    writePE(addr, cur_val | (bitmask));
-  }
+uint8_t mcp_write(uint8_t pino, uint8_t data, int operacao) {
+    if (data == 1) {
+      current_GPIOA |= (1 << pino);
+    }else if (data == 0){ 
+      current_GPIOA &= ~(1 << pino);
+    }
+
+    spi_desabilita();
+    spi_write(OPCODE + operacao);
+    spi_write(GPIOA);
+    uint8_t b = spi_write(current_GPIOA);
+    spi_habilita();
+
+    if(operacao == READ) {
+        return (b >> pino) & 1;
+    }
+    return (uint8_t)0;
 }
 
-void toggleBits(uint8_t addr, uint8_t bitmask){
-  if (addr <= 0x15){
-    uint8_t cur_val = readPE(addr);
-    writePE(addr, cur_val ^ (bitmask));
-  }
+void mcp23S17_invert_pin(uint8_t pino) {
+    uint8_t current = mcp23S17_write_pin(pino, 0, READ);
+    mcp23S17_write_pin(pino, !current, WRITE);
 }
 
-uint8_t readBits(uint8_t addr, uint8_t bitmask)
-{
-  if (addr <= 0x15){
-    uint8_t cur_val = readPE(addr) & bitmask ;
-    return cur_val ;
-  }
-  return 0;
-}
 
-void mPortYSetPinsOut(uint8_t bitmask){
-  clearBits(IODIRA, bitmask);
-}
-
-void mPortZSetPinsOut(uint8_t bitmask){
-  clearBits(IODIRB, bitmask);
-}
-
-void mPortYSetPinsIn(uint8_t bitmask){
-  setBits(IODIRA, bitmask);
-}
-
-void mPortZSetPinsIn(uint8_t bitmask){
-  setBits(IODIRB, bitmask);
-}
-
-void mPortYIntEnable(uint8_t bitmask){
-  setBits(GPINTENA, bitmask);
-}
-
-void mPortZIntEnable(uint8_t bitmask){
-  setBits(GPINTENB, bitmask);
-}
-
-void mPortYIntDisable(uint8_t bitmask){
-  clearBits(GPINTENA, bitmask);
-}
-
-void mPortZIntDisable(uint8_t bitmask){
-  clearBits(GPINTENB, bitmask);
-}
-
-void mPortYEnablePullUp(uint8_t bitmask){
-  setBits(GPPUA, bitmask);
-}
-
-void mPortZEnablePullUp(uint8_t bitmask){
-  setBits(GPPUB, bitmask);
-}
-
-void mPortYDisablePullUp(uint8_t bitmask){
-  clearBits(GPPUA, bitmask);
-}
-
-void mPortZDisablePullUp(uint8_t bitmask){
-  clearBits(GPPUB, bitmask);
-}
-
-void writePE (uint8_t reg, uint8_t data){
-	spi_habilita();
-	spi_write(W_REGISTER|reg);
-	spi_write(data);
-	spi_desabilita();
-}
-
-uint8_t readPE (uint8_t reg){
-	uint8_t x;
-	spi_habilita();
-	spi_write(R_REGISTER|reg);
-	x = spi_write(0x00);
-	spi_desabilita();
-	return x;
-}

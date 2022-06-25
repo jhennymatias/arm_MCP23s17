@@ -8,35 +8,41 @@
 #include "MCP.h"
 #include "spi.h"
 
-void configura_chaves(void)
-{
-	pinMode(PIN_1_08, INPUT);
-	pinMode(PIN_1_04, INPUT);
-	pinMode(PIN_1_01, INPUT);
-	pinMode(PIN_1_00, INPUT);
-	pinMode(PIN_2_10, INPUT);
-}
-
-
-void configura_pino_MCP(void){
-	
-}
-
-uint8_t le_configuracao_chaves(void)
-{
-	uint8_t v=0;
-
-	v = ((digitalRead(PIN_1_08) << 3) | 
-         (digitalRead(PIN_1_04) << 2) | 
-        (digitalRead(PIN_1_01) << 1) | 
-         (digitalRead(PIN_1_00) )) ;
-	return v;
-}
-
 int main(){
-  SystemInit();
-  UART0_Init(9600);
+	SystemInit();
+	UART0_Init(9600);
+    periodica_init();
+    delay_init();
 	mcp_init();
 
-  return 0;
+    uint8_t status;
+    
+    mcp_config(7, OUTPUT);
+    mcp_config(6, OUTPUT);
+    mcp_config(5, OUTPUT);
+    mcp_config(4, OUTPUT);
+    mcp_config(3, INPUT);
+    mcp_config(2, INPUT);
+    mcp_config(1, INPUT);
+    mcp_config(0, INPUT);
+
+    mcp_write(7, 1, WRITE);
+    mcp_write(6, 1, WRITE);
+    mcp_write(5, 1, WRITE);
+    mcp_write(4, 1, WRITE);
+    mcp_write(3, 1, WRITE);
+    mcp_write(2, 1, WRITE);
+    mcp_write(1, 1, WRITE);
+    mcp_write(0, 1, WRITE);
+	
+    while(1) {
+        status = mcp_write(3, 0, READ);
+		printf("%d", status);
+	    
+        delay_ms(100);
+    }
+
+	return 0;
+
 }
+
