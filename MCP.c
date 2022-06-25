@@ -1,7 +1,7 @@
 #include "MCP.h"
 
-uint8_t IODIRA_atual = 0xFF;
-uint8_t GPIOA_atual = 0x00;
+uint8_t IODIRA_atual = 0x00;
+uint8_t GPIOA_atual = 0xFF;
 uint8_t IODIRB_atual = 0xFF;
 uint8_t GPIOB_atual = 0x00;
 
@@ -48,7 +48,7 @@ void mcp_config(uint8_t pino, int operacao){
   spi_desabilita();
   spi_write(OPCODE_ESCRITA);
   if(operacao == INPUT){
-    spi_write(IODIRA);
+    spi_write(IODIRB);
     IODIRB_atual |= (1 << pino);
     spi_write(IODIRB_atual);
   }else{

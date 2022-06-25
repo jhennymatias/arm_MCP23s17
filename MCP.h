@@ -23,14 +23,14 @@
 #define MCP_PIN_A5 5
 #define MCP_PIN_A6 6
 #define MCP_PIN_A7 7
-#define MCP_PIN_B0 8
-#define MCP_PIN_B1 9
-#define MCP_PIN_B2 10
-#define MCP_PIN_B3 11
-#define MCP_PIN_B4 12
-#define MCP_PIN_B5 13
-#define MCP_PIN_B6 14
-#define MCP_PIN_B7 15
+#define MCP_PIN_B0 0
+#define MCP_PIN_B1 1
+#define MCP_PIN_B2 2
+#define MCP_PIN_B3 3
+#define MCP_PIN_B4 4
+#define MCP_PIN_B5 5
+#define MCP_PIN_B6 6
+#define MCP_PIN_B7 7
 
 
 #define WRITE 0
