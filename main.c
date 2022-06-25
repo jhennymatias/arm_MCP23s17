@@ -9,7 +9,6 @@
 #include "spi.h"
 
 int main(){
-	uint8_t b0, b1, b2, b3, b4, b5, b6, b7;
 	SystemInit();
 	UART0_Init(9600);
     periodica_init();
@@ -35,28 +34,28 @@ int main(){
     mcp_config(MCP_PIN_B0, INPUT);
 
 	while(1){
-		if((mcp23S17_write_pin(MCP_PIN_B0, 0, READ))==0){
+		if((mcp_write(MCP_PIN_B0, 0, READ))==0){
 			periodica_cria("LED0", 1000, mcp_write(MCP_PIN_A7, 1, WRITE));
 		}
-		if((mcp23S17_write_pin(MCP_PIN_B1, 0, READ))==0){
+		if((mcp_write(MCP_PIN_B1, 0, READ))==0){
 			periodica_cria("LED1", 1000, mcp_write(MCP_PIN_A6, 1, WRITE));
 		}
-		if((mcp23S17_write_pin(MCP_PIN_B2, 0, READ))==0){
+		if((mcp_write(MCP_PIN_B2, 0, READ))==0){
 			periodica_cria("LED2", 1000, mcp_write(MCP_PIN_A5, 1, WRITE));
 		}
-		if((mcp23S17_write_pin(MCP_PIN_B3, 0, READ))==0){
+		if((mcp_write(MCP_PIN_B3, 0, READ))==0){
 			periodica_cria("LED3", 1000, mcp_write(MCP_PIN_A4, 1, WRITE));
 		}
-		if((mcp23S17_write_pin(MCP_PIN_B4, 0, READ))==0){
+		if((mcp_write(MCP_PIN_B4, 0, READ))==0){
 			periodica_cria("LED4", 1000, mcp_write(MCP_PIN_A3, 1, WRITE));
 		}
-		if((mcp23S17_write_pin(MCP_PIN_B5, 0, READ))==0){
+		if((mcp_write(MCP_PIN_B5, 0, READ))==0){
 			periodica_cria("LED5", 1000, mcp_write(MCP_PIN_A2, 1, WRITE));
 		}
-		if((mcp23S17_write_pin(MCP_PIN_B6, 0, READ))==0){
+		if((mcp_write(MCP_PIN_B6, 0, READ))==0){
 			periodica_cria("LED6", 1000, mcp_write(MCP_PIN_A1, 1, WRITE));
 		}
-		if((mcp23S17_write_pin(MCP_PIN_B7, 0, READ))==0){
+		if((mcp_write(MCP_PIN_B7, 0, READ))==0){
 			periodica_cria("LED7", 1000, mcp_write(MCP_PIN_A0, 1, WRITE));
 		}
 	}
