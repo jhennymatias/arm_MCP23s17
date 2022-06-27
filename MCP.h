@@ -39,7 +39,7 @@
 
 void mcp_init (void);
 void mcp_config(uint8_t pino, int operacao);
-uint8_t mcp_write(uint8_t pino, uint8_t data, int operacao);
+uint8_t mcp_write(uint8_t pino, uint8_t data, uint8_t operacao);
 void mcp23S17_invert_pin(uint8_t pino);
 
 #endif

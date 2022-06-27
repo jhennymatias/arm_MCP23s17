@@ -6,6 +6,7 @@ uint8_t IODIRB_atual = 0xFF;
 uint8_t GPIOB_atual = 0x00;
 
 void mcp_init (void){
+  //uint8_t pino_cs, uint8_t pino_miso, uint8_t pino_mosi, uint8_t pino_sck
   spi_configura (PIN_4_28, PIN_3_25, PIN_3_26, PIN_4_29);
   spi_desabilita();
   spi_write(OPCODE_ESCRITA);
@@ -18,28 +19,10 @@ void mcp_init (void){
   spi_write(IODIRA);
   spi_write(GPIOA_atual);
   spi_habilita();
-
-  spi_desabilita();
-  spi_write(OPCODE_ESCRITA);
-  spi_write(IODIRB);
-  spi_write(IODIRB_atual);
-  spi_habilita();
   
   spi_desabilita();
   spi_write(OPCODE_ESCRITA);
-  spi_write(IODIRB);
-  spi_write(GPIOB_atual);
-  spi_habilita();
-
-  spi_desabilita();
-  spi_write(OPCODE_ESCRITA);
   spi_write(GPPUA);
-  spi_write(0x0F);
-  spi_habilita();
-
-  spi_desabilita();
-  spi_write(OPCODE_ESCRITA);
-  spi_write(GPPUB);
   spi_write(0x0F);
   spi_habilita();
   
@@ -57,46 +40,32 @@ void mcp_config(uint8_t pino, int operacao){
   
   spi_desabilita();
   spi_write(OPCODE_ESCRITA);
-  if(operacao == INPUT){
-    spi_write(IODIRB); 
-    IODIRB_atual |= (1 << pino);
-    spi_write(IODIRB_atual);
-  }else{
-    spi_write(IODIRA);
-    IODIRA_atual &= ~(1 << pino);
-    spi_write(IODIRA_atual);
-  }
+  spi_write(IODIRA);
+  
+  if (operacao == INPUT)
+        IODIRA_atual |= (1 << pino);
+  else if (operacao == OUTPUT)
+       IODIRA_atual &= ~(1 << pino);
+  spi_write(IODIRA_atual);
 
   spi_habilita(); 
+  
 }
 
-uint8_t mcp_write(uint8_t pino, uint8_t data, int operacao) {
+uint8_t mcp_write(uint8_t pino, uint8_t data, uint8_t operacao) {
     uint8_t b =0;
-    if(operacao == INPUT){
-      if (data == 1) {
-        GPIOB_atual |= (1 << pino);
-      }else if (data == 0){ 
-        GPIOB_atual &= ~(1 << pino);
-      }
-    }else{
       if (data == 1) {
         GPIOA_atual |= (1 << pino);
       }else if (data == 0){ 
         GPIOA_atual &= ~(1 << pino);
       } 
-    }
-
+  
 
     spi_desabilita();
-    spi_write(OPCODE_LEITURA);
-    if(operacao == INPUT){
-      spi_write(GPIOB);
-      b = spi_write(GPIOB_atual);
-    }else{
+    spi_write(0x40 +operacao);
       spi_write(GPIOA);
       b = spi_write(GPIOA_atual);
-    }
-
+  
     spi_habilita();
 
     if(operacao == READ) {
@@ -106,9 +75,9 @@ uint8_t mcp_write(uint8_t pino, uint8_t data, int operacao) {
     return (uint8_t)0;
 }
 
-void mcp23S17_invert_pin(uint8_t pino) {
-    uint8_t current = mcp_write(pino, 0, READ);
-    mcp_write(pino, !current, WRITE);
-}
+// void mcp23S17_invert_pin(uint8_t pino) {
+//     uint8_t current = mcp_write(pino, 0, READ);
+//     mcp_write(pino, !current, WRITE);
+// }
 
 

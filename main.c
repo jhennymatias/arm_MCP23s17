@@ -9,8 +9,12 @@
 #include "spi.h"
 
 int main(){
+	
+
 	SystemInit();
 	UART0_Init(9600);
+	
+	printf("jhenny");
     periodica_init();
     delay_init();
 	mcp_init();
@@ -34,15 +38,23 @@ int main(){
     mcp_config(MCP_PIN_B0, INPUT);
 
 	uint8_t status, contador = 0;
-	
+
+	// mcp_write(MCP_PIN_A7, 1, WRITE);
+    // mcp_write(MCP_PIN_A6, 1, WRITE);
+    // mcp_write(MCP_PIN_A5, 1, WRITE);
+    // mcp_write(MCP_PIN_A4, 1, WRITE);
 
 while(1){
-	status = mcp_write(7, 0, READ);
-    printf("%d",status);
 	mcp_write(MCP_PIN_A7, 1, WRITE);
     mcp_write(MCP_PIN_A6, 1, WRITE);
-    mcp_write(MCP_PIN_A5, 1, WRITE);
+    mcp_write(MCP_PIN_A5 ,1, WRITE);
     mcp_write(MCP_PIN_A4, 1, WRITE);
+	// delay_ms(2000);
+	// mcp_write(MCP_PIN_A7, 1, WRITE);
+    // mcp_write(MCP_PIN_A6, 1, WRITE);
+    // mcp_write(MCP_PIN_A5 ,1, WRITE);
+    // mcp_write(MCP_PIN_A4, 1, WRITE);
+	// delay_ms(2000);	
 
 }
     // while(1) {

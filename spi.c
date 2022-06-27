@@ -3,7 +3,6 @@
 #include "spi.h"
 
 uint8_t PINO_CS, PINO_MISO, PINO_MOSI, PINO_SCK;
-
 void spi_configura (uint8_t pino_cs, uint8_t pino_miso, uint8_t pino_mosi, uint8_t pino_sck){
 	PINO_CS   = pino_cs;
 	PINO_MISO = pino_miso;
