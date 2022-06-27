@@ -8,12 +8,28 @@
 
 #define OPCODE_ESCRITA   0x40
 #define OPCODE_LEITURA   0X41
-#define IODIRA   0x00 // define se entrada e saida lado A
-#define IODIRB   0x01 // define se entrada e saida lado B
-#define GPPUA    0x0C //controle resistores de pull up lado A
-#define GPPUB    0x0D //controle resistores de pull up lado B
-#define GPIOA    0x12 // define se low ou high
-#define GPIOB    0x13 // define se low ou high
+#define IODIRA     0x00
+#define IODIRB     0x10
+#define IPOLA      0x01
+#define IPOLB      0x11
+#define GPINTENA   0x02
+#define GPINTENB   0x12
+#define DEFVALA    0x03
+#define DEFVALB    0x13
+#define INTCONA    0x04
+#define INTCONB    0x14
+#define IOCON1     0x05
+#define IOCON2     0x15
+#define GPPUA      0x0C
+#define GPPUB      0x16
+#define INTFA      0x07
+#define INTFB      0x17
+#define INTCAPA    0x08
+#define INTCAPB    0x18
+#define GPIOA      0x12
+#define GPIOB      0x13
+#define OLATA      0x0A
+#define OLATB      0x1A
 
 #define MCP_PIN_A0 0
 #define MCP_PIN_A1 1
@@ -38,7 +54,7 @@
 #define READ 1
 
 void mcp_init (void);
-void mcp_config(uint8_t pino, int operacao);
+void mcp_config(uint8_t pino, uint8_t operacao);
 uint8_t mcp_write(uint8_t pino, uint8_t data, uint8_t operacao);
 void mcp23S17_invert_pin(uint8_t pino);
 
