@@ -8,12 +8,12 @@
 
 #define OPCODE_ESCRITA   0x40
 #define OPCODE_LEITURA   0X41
-#define IODIRA   0x00
-#define IODIRB   0x01
-#define GPPUA    0x0C
-#define GPPUB    0x0D
-#define GPIOA    0x12
-#define GPIOB    0x13
+#define IODIRA   0x00 // define se entrada e saida lado A
+#define IODIRB   0x01 // define se entrada e saida lado B
+#define GPPUA    0x0C //controle resistores de pull up lado A
+#define GPPUB    0x0D //controle resistores de pull up lado B
+#define GPIOA    0x12 // define se low ou high
+#define GPIOB    0x13 // define se low ou high
 
 #define MCP_PIN_A0 0
 #define MCP_PIN_A1 1
@@ -23,6 +23,7 @@
 #define MCP_PIN_A5 5
 #define MCP_PIN_A6 6
 #define MCP_PIN_A7 7
+
 #define MCP_PIN_B0 0
 #define MCP_PIN_B1 1
 #define MCP_PIN_B2 2

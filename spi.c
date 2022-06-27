@@ -19,11 +19,11 @@ void spi_configura (uint8_t pino_cs, uint8_t pino_miso, uint8_t pino_mosi, uint8
 }
 
 
-void spi_habilita (void){
+void spi_desabilita (void){
     digitalWrite(PINO_CS, LOW);
 }
 
-void spi_desabilita(void){
+void spi_habilita(void){
 	digitalWrite(PINO_CS, HIGH);
 }
 

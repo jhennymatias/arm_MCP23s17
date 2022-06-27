@@ -6,12 +6,12 @@ uint8_t IODIRB_atual = 0xFF;
 uint8_t GPIOB_atual = 0x00;
 
 void mcp_init (void){
-	spi_configura (PIN_4_28, PIN_3_25, PIN_3_26, PIN_4_29);
+  spi_configura (PIN_4_28, PIN_3_25, PIN_3_26, PIN_4_29);
   spi_desabilita();
   spi_write(OPCODE_ESCRITA);
   spi_write(IODIRA);
   spi_write(IODIRA_atual);
-  spi_desabilita();
+  spi_habilita();
   
   spi_desabilita();
   spi_write(OPCODE_ESCRITA);
@@ -19,10 +19,11 @@ void mcp_init (void){
   spi_write(GPIOA_atual);
   spi_habilita();
 
+  spi_desabilita();
   spi_write(OPCODE_ESCRITA);
   spi_write(IODIRB);
   spi_write(IODIRB_atual);
-  spi_desabilita();
+  spi_habilita();
   
   spi_desabilita();
   spi_write(OPCODE_ESCRITA);
@@ -45,10 +46,19 @@ void mcp_init (void){
 }
 
 void mcp_config(uint8_t pino, int operacao){
+  /* 
+    Operação de gravação no SPI:
+
+    - desabilita: CS em nível baixo
+    - write opcode 0x40
+    - write endereço
+    - habilita: CS em nível alto
+  */
+  
   spi_desabilita();
   spi_write(OPCODE_ESCRITA);
   if(operacao == INPUT){
-    spi_write(IODIRB);
+    spi_write(IODIRB); 
     IODIRB_atual |= (1 << pino);
     spi_write(IODIRB_atual);
   }else{
@@ -76,8 +86,9 @@ uint8_t mcp_write(uint8_t pino, uint8_t data, int operacao) {
       } 
     }
 
+
     spi_desabilita();
-    spi_write(OPCODE_ESCRITA + operacao);
+    spi_write(OPCODE_LEITURA);
     if(operacao == INPUT){
       spi_write(GPIOB);
       b = spi_write(GPIOB_atual);
@@ -95,9 +106,9 @@ uint8_t mcp_write(uint8_t pino, uint8_t data, int operacao) {
     return (uint8_t)0;
 }
 
-// void mcp23S17_invert_pin(uint8_t pino) {
-//     uint8_t current = mcp_write(pino, 0, READ);
-//     mcp_write(pino, !current, WRITE);
-// }
+void mcp23S17_invert_pin(uint8_t pino) {
+    uint8_t current = mcp_write(pino, 0, READ);
+    mcp_write(pino, !current, WRITE);
+}
 
 
