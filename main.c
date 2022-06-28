@@ -2,41 +2,61 @@
 #include "digital.h"
 #include <stdint.h>
 #include <stdio.h>
-#include "periodica.h"
 #include "delay.h"
-#include "uart.h"
 #include "MCP.h"
 #include "spi.h"
 
 int main(){
-	
-
 	SystemInit();
-	UART0_Init(9600);
     delay_init();
 	mcp_init();
 
-    mcp_config(MCP_PIN_A7, OUTPUT);
-    mcp_config(MCP_PIN_A6, OUTPUT);
-    mcp_config(MCP_PIN_A5, OUTPUT);
-    mcp_config(MCP_PIN_A4, OUTPUT);
-    mcp_config(MCP_PIN_A3, OUTPUT);
-    mcp_config(MCP_PIN_A2, OUTPUT);
-    mcp_config(MCP_PIN_A1, OUTPUT);
-    mcp_config(MCP_PIN_A0, OUTPUT);
+// lado A sempre OUTPUT
+    mcp_config_ladoA(MCP_PIN_A7);
+    mcp_config_ladoA(MCP_PIN_A6);
+    mcp_config_ladoA(MCP_PIN_A5);
+    mcp_config_ladoA(MCP_PIN_A4);
+    mcp_config_ladoA(MCP_PIN_A3);
+    mcp_config_ladoA(MCP_PIN_A2);
+    mcp_config_ladoA(MCP_PIN_A1);
+    mcp_config_ladoA(MCP_PIN_A0);
 
-while(1){
-	
-	mcp_write(MCP_PIN_A7, 1, WRITE);
-    mcp_write(MCP_PIN_A6, 1, WRITE);
-    mcp_write(MCP_PIN_A5, 1, WRITE);
-    mcp_write(MCP_PIN_A4, 1, WRITE);
-	mcp_write(MCP_PIN_A3, 1, WRITE);
-    mcp_write(MCP_PIN_A2, 1, WRITE);
-    mcp_write(MCP_PIN_A1, 1, WRITE);
-    mcp_write(MCP_PIN_A0, 1, WRITE);
-	delay_ms(1000);
-}
+// lado A sempre INPUT
+
+    mcp_config_ladoB(MCP_PIN_B7);
+    mcp_config_ladoB(MCP_PIN_B6);
+    mcp_config_ladoB(MCP_PIN_B5);
+    mcp_config_ladoB(MCP_PIN_B4);
+    mcp_config_ladoB(MCP_PIN_B3);
+    mcp_config_ladoB(MCP_PIN_B2);
+    mcp_config_ladoB(MCP_PIN_B1);
+    mcp_config_ladoB(MCP_PIN_B0);
+
+    while(1){	
+        mcp_write_ladoA(MCP_PIN_A7, 1); // Liga led fixo para testar se o circuito está funcionando
+        if(mcp_write_ladoB(MCP_PIN_B6, 0) == 0){
+            //desliga leds
+            mcp_write_ladoA(MCP_PIN_A6, 0); 
+            mcp_write_ladoA(MCP_PIN_A5, 0);
+            mcp_write_ladoA(MCP_PIN_A4, 0);
+            mcp_write_ladoA(MCP_PIN_A3, 0);
+            mcp_write_ladoA(MCP_PIN_A2, 0);
+            mcp_write_ladoA(MCP_PIN_A1, 0);
+            mcp_write_ladoA(MCP_PIN_A0, 0);
+        }else{
+            // liga leds
+            mcp_write_ladoA(MCP_PIN_A6, 1);
+            mcp_write_ladoA(MCP_PIN_A5, 1);
+            mcp_write_ladoA(MCP_PIN_A4, 1);
+            mcp_write_ladoA(MCP_PIN_A3, 1);
+            mcp_write_ladoA(MCP_PIN_A2, 1);
+            mcp_write_ladoA(MCP_PIN_A1, 1);
+            mcp_write_ladoA(MCP_PIN_A0, 1);
+        }        
+    }
+        
 	return 0;
-	}
+
+}
+
 
